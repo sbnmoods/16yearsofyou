@@ -922,7 +922,7 @@
 
     <!-- Audio Element -->
     <audio id="bgm" loop>
-        <source src="media/theme-song.mp3" type="audio/mp3">
+        <source src="media/theme-song.wav" type="audio/wav">
     </audio>
 
     <script>
@@ -1014,27 +1014,42 @@
         const autoScrollBtn = document.getElementById('autoScrollBtn');
         const bgm = document.getElementById('bgm');
         
-        let autoScrollInterval = null;
+        let autoScrollTimer = null;
         let scrollTargets = [];
         let currentTarget = 0;
         let waitingForResume = false;
 
-        function buildScrollTargets() {
-            scrollTargets = [document.getElementById('hero')];
+                function buildScrollTargets() {
+                    scrollTargets = [document.getElementById('hero')];
 
-            // timeline items
-            document.querySelectorAll('.timeline-item')
-                .forEach(item => scrollTargets.push(item));
+                    // timeline items
+                    document.querySelectorAll('.timeline-item')
+                        .forEach(item => scrollTargets.push(item));
 
-            // sections AFTER timeline (pause points)
-            ['accomplishments', 'travel', 'friends', 'fun', 'closing']
-                .forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.dataset.pausePoint = "true";   // mark pause
-                        scrollTargets.push(el);
-                    }
-                });
+                    // sections AFTER timeline (pause points)
+                    ['accomplishments', 'travel', 'friends', 'fun', 'closing']
+                        .forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.dataset.pausePoint = "true";   // mark pause
+                                scrollTargets.push(el);
+                            }
+                        });
+                }
+
+                function getDelayForTarget(target) {
+            // Timeline items = slow
+            if (target.classList.contains('timeline-item')) {
+                return 4000;
+            }
+
+            // Hero = fast intro
+            if (target.id === 'hero') {
+                return 1500;
+            }
+
+            // Sections after timeline will pause anyway
+            return 1500;
         }
 
         function scrollNext() {
@@ -1048,12 +1063,16 @@
             const target = scrollTargets[currentTarget];
             target.scrollIntoView({ behavior: 'smooth' });
 
-            // If this is a big section → PAUSE
+            // Pause at big sections
             if (target.dataset.pausePoint) {
                 waitingForResume = true;
                 autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Resume ▶';
-                clearInterval(autoScrollInterval);
+                return;
             }
+
+            // Schedule next scroll based on what this target is
+            const delay = getDelayForTarget(target);
+            autoScrollTimer = setTimeout(scrollNext, delay);
         }
 
         function startAutoScroll() {
@@ -1064,18 +1083,18 @@
 
             scrollTargets[0].scrollIntoView({ behavior: 'smooth' });
 
-            autoScrollInterval = setInterval(scrollNext, 2500);
+            autoScrollTimer = setTimeout(scrollNext, 1500);
         }
 
         function resumeAutoScroll() {
             waitingForResume = false;
             autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Stop';
-            autoScrollInterval = setInterval(scrollNext, 2500);
+            autoScrollTimer = setTimeout(scrollNext, 1500);
         }
 
         function stopAutoScroll() {
-            clearInterval(autoScrollInterval);
-            autoScrollInterval = null;
+            clearTimeout(autoScrollTimer);
+            autoScrollTimer = null;
             bgm.pause();
             bgm.currentTime = 0;
             autoScrollBtn.classList.remove('active');
@@ -1083,7 +1102,7 @@
         }
 
         autoScrollBtn.addEventListener('click', () => {
-            if (!autoScrollInterval && !waitingForResume) {
+            if (!autoScrollTimer && !waitingForResume) {
                 autoScrollBtn.classList.add('active');
                 autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Stop';
                 startAutoScroll();
@@ -1111,7 +1130,8 @@
                     <h3 class="timeline-age">${item.title}</h3>
                     <p class="timeline-text">${item.text}</p>
                     <div class="timeline-media">
-                        <img src="media/age${item.year}.jpg" alt="${item.title}" onerror="this.style.display='none'">
+                        <img src="media/age${item.year}.jpg" alt="${item.title}" 
+                             onerror="this.style.display='none'">
                     </div>
                 </div>
             `;
@@ -1121,16 +1141,45 @@
         // ========================================
         // GALLERY RENDER
         // ========================================
-        function renderGallery(gridId, items) {
+        // Try multiple extensions to handle case sensitivity
+        function getImagePath(baseName) {
+            const extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+            for (const ext of extensions) {
+                // Try lowercase and uppercase
+                const lower = baseName.toLowerCase() + ext;
+                const upper = baseName.toUpperCase() + ext;
+                // We'll let the browser try - if it fails, onerror handles it
+                return baseName.toLowerCase() + ext; // Default to lowercase
+            }
+        }
+
+        // Check if image file exists (case-insensitive)
+        function imageExists(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        }
+
+        async function renderGallery(gridId, items) {
             const grid = document.getElementById(gridId);
-            items.forEach((item, index) => {
-                const imgPath = `media/${gridId.replace('Grid', '')}-${index + 1}.jpg`;
+            const category = gridId.replace('Grid', '');
+            
+            for (let index = 0; index < items.length; index++) {
+                const item = items[index];
+                const baseName = `media/${category}-${index + 1}`;
+                const imgPath = getImagePath(baseName);
+                
+                // Create gallery item
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.innerHTML = `
-                    <img src="${imgPath}" alt="${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="${imgPath}" alt="${item.title}" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="gallery-placeholder" style="display:none;">
-                        <span>📷 Add photo: ${imgPath}</span>
+                        <span>📷 ${item.title}</span>
                     </div>
                     <div class="gallery-overlay">
                         <h4>${item.title}</h4>
@@ -1139,9 +1188,10 @@
                 `;
                 galleryItem.onclick = () => openLightbox(imgPath, item.title);
                 grid.appendChild(galleryItem);
-            });
+            }
         }
 
+        // Render galleries
         renderGallery('accomplishmentsGrid', config.galleries.accomplishments);
         renderGallery('travelGrid', config.galleries.travel);
         renderGallery('friendsGrid', config.galleries.friends);
@@ -1173,6 +1223,17 @@
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxClose = document.getElementById('lightboxClose');
+
+        // function openLightbox(src, alt) {
+        //     // Check if it's a placeholder
+        //     if (src.includes('media/age') || src.includes('media/accomplishments') || src.includes('media/travel') || src.includes('media/friends') || src.includes('media/fun')) {
+        //         alert('This is a placeholder. Add your actual images to the media folder and rename them to match the expected filenames.');
+        //         return;
+        //     }
+        //     lightboxImg.src = src;
+        //     lightboxImg.alt = alt;
+        //     lightbox.classList.add('active');
+        // }
 
         function openLightbox(src, alt) {
             const testImg = new Image();
