@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16 Years of You</title>
+    <style>
+        /* ========================================
+           CSS VARIABLES & RESET
+           ======================================== */
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --gold: #f4a261;
+            --text-light: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --gradient-hero: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --gradient-card: linear-gradient(145deg, #1f1f3a 0%, #16213e 100%);
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
+            --shadow-hover: 0 8px 40px rgba(233,69,96,0.2);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--primary);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition);
+        }
+
+        .nav.scrolled {
+            padding: 0.75rem 2rem;
+            background: rgba(26, 26, 46, 0.95);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-light);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auto-scroll-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.6rem 1.4rem;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(233,69,96,0.10);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .auto-scroll-btn:hover,
+        .auto-scroll-btn.active {
+            background: var(--gold);
+            color: var(--primary);
+            box-shadow: 0 4px 24px rgba(244,162,97,0.18);
+        }
+
+        .auto-scroll-icon svg {
+            display: block;
+        }
+
+        /* Mobile nav */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-hero);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(233,69,96,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244,162,97,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #f4a261 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title span {
+            display: block;
+            font-size: 0.4em;
+            font-weight: 400;
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .hero-dedication {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero-dedication strong {
+            color: var(--gold);
+        }
+
+        .scroll-hint {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(10px); }
+            60% { transform: translateY(5px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           SECTION STYLES
+           ======================================== */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           TIMELINE
+           ======================================== */
+        .timeline-section {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--gold) 100%);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(50% + 2rem);
+            margin-bottom: 4rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: calc(50% + 2rem);
+        }
+
+        @media (max-width: 768px) {
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 50px;
+                padding-right: 0;
+                justify-content: flex-start;
+            }
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-dot {
+                left: 20px;
+            }
+        }
+
+        .timeline-card {
+            background: var(--gradient-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .timeline-age {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .timeline-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-media {
+            width: 100%;
+            height: 200px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .timeline-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            border-radius: var(--radius-md);
+        }
+
+        /* ========================================
+           GALLERY SECTIONS
+           ======================================== */
+        .gallery-section {
+            background: var(--secondary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h4 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .gallery-overlay p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ========================================
+           CLOSING SECTION
+           ======================================== */
+        .closing-section {
+            text-align: center;
+            padding: 8rem 2rem;
+            background: var(--gradient-hero);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            animation: float-up linear infinite;
+        }
+
+        .star {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation-duration: 8s;
+            animation-timing-function: ease-in-out;
+        }
+
+        .star:nth-child(2n) {
+            width: 6px;
+            height: 6px;
+            animation-duration: 10s;
+        }
+
+        .star:nth-child(3n) {
+            width: 10px;
+            height: 10px;
+            animation-duration: 12s;
+        }
+
+        .balloon {
+            width: 30px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            animation-duration: 15s;
+            animation-timing-function: ease-in-out;
+        }
+
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .balloon:nth-child(2n) {
+            background: var(--gold);
+        }
+
+        .balloon:nth-child(3n) {
+            background: #9b59b6;
+        }
+
+        .butterfly {
+            width: 20px;
+            height: 15px;
+            animation-duration: 12s;
+            animation-timing-function: ease-in-out;
+        }
+
+        .butterfly::before,
+        .butterfly::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 15px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            animation: flap 0.3s ease-in-out infinite alternate;
+        }
+
+        .butterfly::before {
+            left: 0;
+            transform-origin: right center;
+        }
+
+        .butterfly::after {
+            right: 0;
+            transform-origin: left center;
+            background: linear-gradient(225deg, #ff6b9d 0%, #c44569 100%);
+        }
+
+        .butterfly.orange::before,
+        .butterfly.orange::after {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .butterfly.blue::before,
+        .butterfly.blue::after {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flap {
+            from {
+                transform: rotateY(-30deg);
+            }
+            to {
+                transform: rotateY(30deg);
+            }
+        }
+
+        .closing-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(233,69,96,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .closing-age {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 15vw, 10rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .closing-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+        }
+
+        .closing-message {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .closing-song {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .closing-song:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(233,69,96,0.4);
+        }
+
+        /* ========================================
+           LIGHTBOX
+           ======================================== */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--primary);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            section {
+                padding: 4rem 1.5rem;
+            }
+
+            .timeline-card {
+                max-width: 100%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo"><span>Prital </span>16 <span>Years</span></a>
+        <ul class="nav-links">
+            <li><a href="#timeline">Timeline</a></li>
+            <li><a href="#accomplishments">Accomplishments</a></li>
+            <li><a href="#travel">Travel</a></li>
+            <li><a href="#friends">Friends</a></li>
+            <li><a href="#fun">Fun</a></li>
+        </ul>
+        <button class="auto-scroll-btn" id="autoScrollBtn">
+            <span class="auto-scroll-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" stroke="var(--accent)" stroke-width="2" fill="var(--primary)"/>
+                    <polygon points="10,8 16,12 10,16" fill="var(--accent)"/>
+                </svg>
+            </span>
+            <span class="auto-scroll-label">Auto Play</span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <p class="hero-subtitle">A Journey Through Time</p>
+            <h1 class="hero-title">
+                16 Years of You
+                <span>Interactive Timeline</span>
+            </h1>
+            <p class="hero-dedication">Made with love for <strong>Prital</strong></p>
+            <div class="scroll-hint">
+                <span>Scroll to begin</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M19 12l-7 7-7-7"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section" id="timeline">
+        <div class="section-header">
+            <p class="section-tag">The Journey</p>
+            <h2 class="section-title">16 Years of Memories</h2>
+            <p class="section-subtitle">Click on any year to view more photos from that time</p>
+        </div>
+        <div class="timeline">
+            <!-- Timeline items will be populated by JS -->
+        </div>
+    </section>
+
+    <!-- Accomplishments Section -->
+    <section class="gallery-section" id="accomplishments">
+        <div class="section-header">
+            <p class="section-tag">Achievements</p>
+            <h2 class="section-title">Accomplishments</h2>
+            <p class="section-subtitle">Proud moments and achievements over the years</p>
+        </div>
+        <div class="gallery-grid" id="accomplishmentsGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- Travel Section -->
+    <section class="gallery-section" id="travel">
+        <div class="section-header">
+            <p class="section-tag">Adventures</p>
+            <h2 class="section-title">Travel Highlights</h2>
+            <p class="section-subtitle">Memories from adventures around the world</p>
+        </div>
+        <div class="gallery-grid" id="travelGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- Friends Section -->
+    <section class="gallery-section" id="friends">
+        <div class="section-header">
+            <p class="section-tag">Connections</p>
+            <h2 class="section-title">Friends & Family</h2>
+            <p class="section-subtitle">Cherished moments with the people who matter</p>
+        </div>
+        <div class="gallery-grid" id="friendsGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- Fun Section -->
+    <section class="gallery-section" id="fun">
+        <div class="section-header">
+            <p class="section-tag">Good Times</p>
+            <h2 class="section-title">Fun Moments</h2>
+            <p class="section-subtitle">Laughter, adventures, and unforgettable times</p>
+        </div>
+        <div class="gallery-grid" id="funGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- Closing Section -->
+    <section class="closing-section" id="closing">
+        <div class="particles" id="particles"></div>
+        <p class="section-tag">And Now</p>
+        <div class="closing-age">16</div>
+        <h2 class="closing-title">Happy 16th Birthday!</h2>
+        <p class="closing-message">
+            Dear Puppy kutty,<br><br>
+            As you step into this new chapter, I want you to know how incredibly proud I am of the person you've become. Every moment of watching you grow has been my greatest joy. May this year bring you endless happiness, exciting adventures, and all the dreams your heart desires.<br><br>
+            With all my love,<br>
+            Amma & Appa
+        </p>
+        <a href="https://open.spotify.com/playlist/your-playlist" target="_blank" class="closing-song">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Play Your Song
+        </a>
+    </section>
+
+    <!-- Final Section -->
+    <section class="final-section" id="final">
+        <div class="section-header">
+            <img src="media/thumbsUp.jpg" alt="Thumbs Up" style="width: 250px; height: auto; border-radius: var(--radius-md); margin-bottom: 1rem;">
+            <h2 class="section-title">That’s our 16 years of joy, how’d you enjoy it?</h2>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Made with ❤️ | 16 Years of You</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImg">
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bgm" loop>
+        <source src="media/theme-song.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        const config = {
+            name: 'Prital',
+            parentName: 'Amma & Appa',
+            spotifyPlaylist: 'https://open.spotify.com/playlist/your-playlist',
+            // Timeline data - customize these
+            timeline: [
+                { year: 2010, title: 'Tiny Beginnings', text: 'The journey began with your first breath - a moment that changed everything.' },
+                { year: 2011, title: 'Fast Steps', text: 'You took your first steps in 11 months and started exploring the world sooner than most other kids.' },
+                { year: 2012, title: 'Toddler Adventures', text: 'Your curiosity knew no bounds, Running, climbing, and getting into everything - the terrible twos were anything but!' },
+                { year: 2013, title: 'Preschool Days', text: 'Never scared of trying something new - you were always eager to learn and grow.' },
+                { year: 2014, title: 'Kindergarten', text: 'The big step into school - you were so brave and excited.' },
+                { year: 2015, title: 'First Grade', text: 'Learning to read and write - your eyes lit up with every new word.' },
+                { year: 2016, title: 'Growing Up', text: 'You were starting to show your unique personality and talents.' },
+                { year: 2017, title: 'New Adventures', text: 'Making friends and discovering new interests outside of school.' },
+                { year: 2018, title: 'Third Grade', text: 'You were becoming more independent and confident every day.' },
+                { year: 2019, title: 'Cloud 9', text: 'Growing up and experiencing life to the fullest.' },
+                { year: 2020, title: 'Personality', text: 'Officially double digits - unique style that you made your own.' },
+                { year: 2021, title: 'Middle School', text: 'Transition to middle school and new responsibilities - handled with such grace.' },
+                { year: 2022, title: 'Bonjour Canada', text: 'The Canada winters did not dampen your spirit - you thrived in the cold!' },
+                { year: 2023, title: 'Teen Freshman', text: 'High school life began @ thirteen - new friends, new challenges, new experiences.' },
+                { year: 2024, title: 'Sophomore', text: 'Finding your voice and standing up for what you believe in.' },
+                { year: 2025, title: 'Junior Year', text: 'Growing into an amazing young woman - we are so proud of you.' },
+                { year: 2026, title: '16 & Ready', text: 'You are now 16 - ready to take on the world!' }
+            ],
+            // Gallery images - add actual image paths here
+            galleries: {
+                accomplishments: [
+                    { title: 'Student of the Year', desc: 'Wow, you won it all...' },
+                    { title: 'The Athlete', desc: 'You were a natural athlete and your athletic prowess shone brightly.' },
+                    { title: 'Kung-fu', desc: 'Your love for martial arts was evident.' },
+                    { title: 'Rise of the Badminton Player', desc: 'You were so good that everyone took notice.' },
+                    { title: 'MJ', desc: 'Cute Michael Jackson dance - Beat it...' },
+                    { title: 'Rise of the Badminton Player', desc: 'You were so good that everyone took notice.' }
+                ],
+                travel: [
+                    { title: 'Kite Flying', desc: 'It was awesome to fly a kite at the beach!' },
+                    { title: 'Breathtaking Temples', desc: 'Hindu architecture is fascinating!' },
+                    { title: 'Vastness', desc: 'The sky is the limit.' },
+                    { title: 'Hey Winnie', desc: 'The coldest city in Canada!' },
+                    { title: 'Trip to the ice cafe', desc: 'Fascinating ice structure!' },
+                    { title: 'Marshmallow break', desc: 'Burn em and eat em! - at Whistler, BC' }
+                ],
+                friends: [
+                    { title: 'Parents', desc: 'Together with my parents' },
+                    { title: 'Nilan&Namya', desc: 'So many amazing memories together' },
+                    { title: 'Rishika', desc: 'Long time awesome friendship' },
+                    { title: 'Austin-Texas', desc: 'At Bucees' },
+                    { title: 'Palmville', desc: 'Halloween at Palmville' },
+                    { title: 'Victor Wyatt', desc: 'Canadian school friends.' },
+                    { title: 'Festival', desc: 'Indian festivals are the best!' },
+                    { title: 'Looney tunes', desc: 'Always have time for these classic characters!' },
+                    { title: 'Sush', desc: 'With my mother' }
+                ],
+                fun: [
+                    { title: 'Just Fun', desc: 'No reason not to have fun!' },
+                    { title: 'All the drama', desc: 'Life is full of surprises and drama!' },
+                    { title: 'Beach read', desc: 'Reading by the beach is relaxing and fun!' },
+                    { title: 'Choir', desc: 'Enjoyed every bit of the singing' },
+                    { title: 'Art', desc: 'Art is super fun' },
+                    { title: 'Take a break', desc: 'Vacation with family is relaxing!' },
+                    { title: 'Zip Line', desc: 'Exhilarating experience!' },
+                    { title: 'Paatshala', desc: 'School is fun, or is it?' },
+                    { title: 'Pirate', desc: 'Always loved being a pirate!' }
+                ]
+            }
+        };
+
+        // ========================================
+        // NAVIGATION SCROLL EFFECT
+        // ========================================
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // ========================================
+        // AUTO SCROLL WITH AUTO-PLAY MUSIC
+        // ========================================
+        const autoScrollBtn = document.getElementById('autoScrollBtn');
+        const bgm = document.getElementById('bgm');
+        
+        let autoScrollInterval = null;
+        let scrollTargets = [];
+        let currentTarget = 0;
+        let waitingForResume = false;
+
+        function buildScrollTargets() {
+            scrollTargets = [document.getElementById('hero')];
+
+            // timeline items
+            document.querySelectorAll('.timeline-item')
+                .forEach(item => scrollTargets.push(item));
+
+            // sections AFTER timeline (pause points)
+            ['accomplishments', 'travel', 'friends', 'fun', 'closing']
+                .forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.dataset.pausePoint = "true";   // mark pause
+                        scrollTargets.push(el);
+                    }
+                });
+        }
+
+        function scrollNext() {
+            currentTarget++;
+
+            if (currentTarget >= scrollTargets.length) {
+                stopAutoScroll();
+                return;
+            }
+
+            const target = scrollTargets[currentTarget];
+            target.scrollIntoView({ behavior: 'smooth' });
+
+            // If this is a big section → PAUSE
+            if (target.dataset.pausePoint) {
+                waitingForResume = true;
+                autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Resume ▶';
+                clearInterval(autoScrollInterval);
+            }
+        }
+
+        function startAutoScroll() {
+            bgm.play().catch(() => {});
+            buildScrollTargets();
+            currentTarget = 0;
+            waitingForResume = false;
+
+            scrollTargets[0].scrollIntoView({ behavior: 'smooth' });
+
+            autoScrollInterval = setInterval(scrollNext, 2500);
+        }
+
+        function resumeAutoScroll() {
+            waitingForResume = false;
+            autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Stop';
+            autoScrollInterval = setInterval(scrollNext, 2500);
+        }
+
+        function stopAutoScroll() {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+            bgm.pause();
+            bgm.currentTime = 0;
+            autoScrollBtn.classList.remove('active');
+            autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Auto Play';
+        }
+
+        autoScrollBtn.addEventListener('click', () => {
+            if (!autoScrollInterval && !waitingForResume) {
+                autoScrollBtn.classList.add('active');
+                autoScrollBtn.querySelector('.auto-scroll-label').textContent = 'Stop';
+                startAutoScroll();
+            } 
+            else if (waitingForResume) {
+                resumeAutoScroll();
+            } 
+            else {
+                stopAutoScroll();
+            }
+        });
+
+        // ========================================
+        // TIMELINE RENDER
+        // ========================================
+        const timelineContainer = document.querySelector('.timeline');
+        
+        config.timeline.forEach((item, index) => {
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+            timelineItem.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <p class="timeline-year">${item.year}</p>
+                    <h3 class="timeline-age">${item.title}</h3>
+                    <p class="timeline-text">${item.text}</p>
+                    <div class="timeline-media">
+                        <img src="media/age${item.year}.jpg" alt="${item.title}" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            `;
+            timelineContainer.appendChild(timelineItem);
+        });
+
+        // ========================================
+        // GALLERY RENDER
+        // ========================================
+        function renderGallery(gridId, items) {
+            const grid = document.getElementById(gridId);
+            items.forEach((item, index) => {
+                const imgPath = `media/${gridId.replace('Grid', '')}-${index + 1}.jpg`;
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${imgPath}" alt="${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-placeholder" style="display:none;">
+                        <span>📷 Add photo: ${imgPath}</span>
+                    </div>
+                    <div class="gallery-overlay">
+                        <h4>${item.title}</h4>
+                        <p>${item.desc}</p>
+                    </div>
+                `;
+                galleryItem.onclick = () => openLightbox(imgPath, item.title);
+                grid.appendChild(galleryItem);
+            });
+        }
+
+        renderGallery('accomplishmentsGrid', config.galleries.accomplishments);
+        renderGallery('travelGrid', config.galleries.travel);
+        renderGallery('friendsGrid', config.galleries.friends);
+        renderGallery('funGrid', config.galleries.fun);
+
+        // ========================================
+        // SCROLL ANIMATIONS
+        // ========================================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+
+        // ========================================
+        // LIGHTBOX
+        // ========================================
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        function openLightbox(src, alt) {
+            // Check if it's a placeholder
+            if (src.includes('media/age') || src.includes('media/accomplishments') || src.includes('media/travel') || src.includes('media/friends') || src.includes('media/fun')) {
+                alert('This is a placeholder. Add your actual images to the media folder and rename them to match the expected filenames.');
+                return;
+            }
+            lightboxImg.src = src;
+            lightboxImg.alt = alt;
+            lightbox.classList.add('active');
+        }
+
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                lightbox.classList.remove('active');
+            }
+        });
+
+        // ========================================
+        // SMOOTH SCROLL FOR NAV LINKS
+        // ========================================
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // ========================================
+        // FLOATING PARTICLES (Stars, Balloons, Butterflies)
+        // ========================================
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const type = Math.random();
+            const left = Math.random() * 100;
+            const delay = Math.random() * 15;
+            
+            particle.style.left = left + '%';
+            particle.style.animationDelay = delay + 's';
+            
+            if (type < 0.4) {
+                // Star
+                particle.classList.add('star');
+                particle.style.top = '-20px';
+            } else if (type < 0.7) {
+                // Balloon
+                particle.classList.add('balloon');
+                particle.style.top = '-50px';
+                particle.style.left = (Math.random() * 90 + 5) + '%';
+            } else {
+                // Butterfly
+                particle.classList.add('butterfly');
+                const colorType = Math.random();
+                if (colorType < 0.33) {
+                    particle.classList.add('orange');
+                } else if (colorType < 0.66) {
+                    particle.classList.add('blue');
+                }
+                particle.style.top = '-20px';
+            }
+            
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
