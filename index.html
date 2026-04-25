@@ -1175,14 +1175,18 @@
         const lightboxClose = document.getElementById('lightboxClose');
 
         function openLightbox(src, alt) {
-            // Check if it's a placeholder
-            if (src.includes('media/age') || src.includes('media/accomplishments') || src.includes('media/travel') || src.includes('media/friends') || src.includes('media/fun')) {
+            const testImg = new Image();
+            testImg.src = src;
+
+            testImg.onload = () => {
+                lightboxImg.src = src;
+                lightboxImg.alt = alt;
+                lightbox.classList.add('active');
+            };
+
+            testImg.onerror = () => {
                 alert('This is a placeholder. Add your actual images to the media folder and rename them to match the expected filenames.');
-                return;
-            }
-            lightboxImg.src = src;
-            lightboxImg.alt = alt;
-            lightbox.classList.add('active');
+            };
         }
 
         lightboxClose.addEventListener('click', () => {
